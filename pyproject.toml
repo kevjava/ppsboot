@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "ppsboot"
+version = "0.1.0"
+description = ""
+authors = ["Kevin Wallace <kev@kevinja.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+textual = "^0.41.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+pytest-mock = "^3.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
