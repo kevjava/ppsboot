@@ -33,6 +33,8 @@ class Day1(Solution):
         return len(increasing)
     
     def sliding_window(self, iterable, n):
+        """ Stolen mercilessly from 
+        [here](https://docs.python.org/3/library/itertools.html#itertools-recipes) """
         # sliding_window('ABCDEFG', 4) --> ABCD BCDE CDEF DEFG
         it = iter(iterable)
         window = collections.deque(itertools.islice(it, n-1), maxlen=n)
