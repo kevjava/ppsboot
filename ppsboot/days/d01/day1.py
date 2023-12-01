@@ -4,8 +4,12 @@ from ppsboot.utils.inputfile import InputFile
 from ppsboot.utils.solution import Solution
 
 class Day1(Solution):
+    """ Day 1's solution.
+    
+    Problem statement is [here](https://adventofcode.com/2021/day/1).
+    """
 
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__(1, 'ppsboot/days/d01/input.txt')
     
     def load_input(self, filename:str) -> list:
@@ -32,9 +36,9 @@ class Day1(Solution):
         increasing = list(filter(lambda pair: pair[1] > pair[0], pairs))
         return len(increasing)
     
-    def sliding_window(self, iterable, n):
+    def sliding_window(self, iterable, n) -> tuple:
         """ Stolen mercilessly from 
-        [here](https://docs.python.org/3/library/itertools.html#itertools-recipes) 
+        [here](https://docs.python.org/3/library/itertools.html#itertools-recipes). 
 
         `sliding_window('ABCDEFG', 4) --> ABCD BCDE CDEF DEFG`
 
