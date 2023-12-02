@@ -1,6 +1,5 @@
 
 from functools import reduce
-from ppsboot.utils.inputfile import InputFile
 from ppsboot.utils.solution import Solution
 
 
@@ -14,8 +13,9 @@ class Day2(Solution):
         super().__init__(2, 'ppsboot/days/d02/input.txt')
 
     def load_input(self, filename: str) -> list[tuple[str, int]]:
-        tuples = InputFile(filename).as_tuples()
-        return list(map(lambda t: (t[0], int(t[1])), tuples))
+        with open(self._filename) as f:
+            tuples = [tuple(line.split()) for line in f.readlines()]
+            return list(map(lambda t: (t[0], int(t[1])), tuples))
 
     def calculate_position(self, position: tuple[int, int],
                            instruction: tuple[str, int]) -> tuple[int, int]:
