@@ -12,12 +12,12 @@ class Solution:
         self._filename = filename
 
     @abstractmethod
-    def load_input(self, filename:str) -> list:
-        """ Loads the input file. 
-        
+    def load_input(self, filename: str) -> any:
+        """ Loads the input file.
+
         Args:
             filename (str): The name of the input file.
-        
+
         Returns:
             list: The input file as a list of strings.
         """
@@ -25,11 +25,11 @@ class Solution:
             return f.readlines()
 
     @abstractmethod
-    def part1(self, input: list) -> any:
+    def part1(self, input: any) -> any:
         raise NotYetImplemented("Part 1 not yet implemented")
 
     @abstractmethod
-    def part2(self, input: list) -> any:
+    def part2(self, input: any) -> any:
         raise NotYetImplemented("Part 2 not yet implemented")
 
     @property
