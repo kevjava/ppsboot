@@ -120,14 +120,6 @@ class Day5(Solution):
         return Vector((int(startx), int(starty)), (int(endx), int(endy)))
 
     def load_input(self, filename: str) -> list[Vector]:
-        """ Loads the input file.
-
-        Args:
-            filename (str): The name of the input file.
-
-        Returns:
-            list: The input file as a list of strings.
-        """
         with open(filename) as f:
             return [self.parse_line(line) for line in f.readlines()]
 
