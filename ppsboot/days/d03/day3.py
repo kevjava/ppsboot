@@ -1,4 +1,3 @@
-from ppsboot.utils.inputfile import InputFile
 from ppsboot.utils.solution import Solution
 
 
@@ -9,20 +8,23 @@ class Day3(Solution):
         super().__init__(3, 'ppsboot/days/d03/input.txt')
 
     def load_input(self, filename: str) -> list[str]:
-        return InputFile(filename).as_character_lists()
+        with open(self._filename) as f:
+            return [list(line.strip()) for line in f.readlines()]
 
     def find_most_common(self, line: list[str]) -> str:
         """
         Converts the line to a set of characters, then finds the one with the highest count,
         using `max`. Inspired by code found
         [here](https://www.geeksforgeeks.org/python-find-most-frequent-element-in-a-list/)
+        The reverse sort makes sure the ones break the tie (in the case of a tie, max returns
+        the first one).
         """
         return max(sorted(list(set(line)), reverse=True), key=line.count)
 
     def find_least_common(self, line: list[str]) -> str:
         """
         Converts the line to a set of characters, then finds the one with the lowest count,
-        using `min`.
+        using `min`.  The sort order makes sure zeros break the tie.
          """
         return min(sorted(list(set(line))), key=line.count)
 
@@ -37,13 +39,16 @@ class Day3(Solution):
         most_common_chars = [self.find_most_common(x) for x in transposed_input]
         gamma = int(''.join(most_common_chars), 2)
 
-        least_common_chars = list(map(self.find_least_common, transposed_input))
+        # least_common_chars = list(map(self.find_least_common, transposed_input))
         least_common_chars = [self.find_least_common(x) for x in transposed_input]
         epsilon = int(''.join(least_common_chars), 2)
 
         return gamma * epsilon
 
     def part2(self, input: list[str]) -> int:
+        """
+
+        """
         matching_values = [''.join(x) for x in input]
         prefix, digit = '', 0
         while len(matching_values) > 1:

@@ -96,8 +96,7 @@ class Day4(Solution):
             called_numbers = game._called_numbers[:i+1]
             if (len(cards) > 1):
                 winning_cards = [card for card in cards if card.is_winner(called_numbers)]
-                for card in winning_cards:
-                    cards.remove(card)
+                cards = [card for card in cards if card not in winning_cards]
             else:
                 if (cards[0].is_winner(called_numbers)):
                     return cards[0].score(called_numbers)
