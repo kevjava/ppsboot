@@ -7,6 +7,7 @@ from ppsboot.days.d06.day6 import Day6
 from ppsboot.days.d07.day7 import Day7
 from ppsboot.days.d08.day8 import Day8
 from ppsboot.days.d09.day9 import Day9
+from ppsboot.days.d10.day10 import Day10
 from ppsboot.utils.solution import Solution
 
 
@@ -27,6 +28,7 @@ class Days:
         self.add(Day7())
         self.add(Day8())
         self.add(Day9())
+        self.add(Day10())
 
     def add(self, day: Solution) -> None:
         """ Adds a day.
