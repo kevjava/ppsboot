@@ -12,12 +12,11 @@ MatchingChars = {
 }
 
 
-# [0] is the error score, [1] is the completion score
-ClosingChars = {
-    ')': (3, 1),
-    ']': (57, 2),
-    '}': (1197, 3),
-    '>': (25137, 4),
+ClosingChars = {  # Is there a better way for this? Lots of repetition.
+    ')': {'error': 3, 'completion': 1},
+    ']': {'error': 57, 'completion': 2},
+    '}': {'error': 1197, 'completion': 3},
+    '>': {'error': 25137, 'completion': 4},
 }
 
 
@@ -31,12 +30,13 @@ class Line:
 
     def error_score(self):
         """ Returns the error score. """
-        return ClosingChars[self.error][0] if self.error else 0
+        return ClosingChars[self.error]['error'] if self.error else 0
 
     def completion_score(self):
         """ Returns the completion score. """
         return reduce(lambda x, y: x * 5 + y,
-                      [ClosingChars[x][1] for x in self.completion]) if self.completion else 0
+                      [ClosingChars[x]['completion'] for x in self.completion]) \
+            if self.completion else 0
 
     def __complete_line(self, stack: list[str]) -> list[str]:
         """ Returns the completion characters for the line. """
