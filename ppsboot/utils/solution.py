@@ -1,5 +1,6 @@
 
 from abc import abstractmethod
+import copy
 import time
 
 from ppsboot.utils.exceptions import NotYetImplemented
@@ -58,5 +59,5 @@ class Solution:
         input = self.load_input(self.filename)
 
         print(f"Day {self.day}:")
-        self._run_part(self.part1, 1, input)
-        self._run_part(self.part2, 2, input)
+        self._run_part(self.part1, 1, (copy.deepcopy(input)))
+        self._run_part(self.part2, 2, (copy.deepcopy(input)))
