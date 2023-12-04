@@ -11,19 +11,12 @@ MatchingChars = {
 }
 
 
-@dataclass(frozen=True)
-class ClosingChar:
-    """ Closing character. """
-    char: str
-    error_score: int
-    completion_score: int
-
-
+# [0] is the error score, [1] is the completion score
 ClosingChars = {
-    ')': ClosingChar(')', 3, 1),
-    ']': ClosingChar(']', 57, 2),
-    '}': ClosingChar('}', 1197, 3),
-    '>': ClosingChar('>', 25137, 4),
+    ')': (3, 1),
+    ']': (57, 2),
+    '}': (1197, 3),
+    '>': (25137, 4),
 }
 
 
@@ -58,13 +51,13 @@ class Line:
 
     def error_score(self):
         """ Returns the error score. """
-        return ClosingChars[self.__error].error_score if self.__error else 0
+        return ClosingChars[self.__error][0] if self.__error else 0
 
     def completion_score(self):
         """ Returns the completion score. """
         if (self.__completion):
             return reduce(lambda x, y: x * 5 + y,
-                          [ClosingChars[x].completion_score for x in self.__completion])
+                          [ClosingChars[x][1] for x in self.__completion])
         else:
             return 0
 
