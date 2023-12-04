@@ -1,119 +1,114 @@
+from dataclasses import dataclass
 from functools import reduce
 from ppsboot.utils.solution import Solution
 
 
-ErrorScores = {
-    ')': 3,
-    ']': 57,
-    '}': 1197,
-    '>': 25137,
+MatchingChars = {
+    '(': ')',
+    '[': ']',
+    '{': '}',
+    '<': '>',
 }
 
 
-CompletionScores = {
-    ')': 1,
-    ']': 2,
-    '}': 3,
-    '>': 4,
+@dataclass(frozen=True)
+class ClosingChar:
+    """ Closing character. """
+    char: str
+    error_score: int
+    completion_score: int
+
+
+ClosingChars = {
+    ')': ClosingChar(')', 3, 1),
+    ']': ClosingChar(']', 57, 2),
+    '}': ClosingChar('}', 1197, 3),
+    '>': ClosingChar('>', 25137, 4),
 }
 
 
 class Line:
     """ Line class."""
 
-    _line: str
-    _is_corrupted = False
-    _is_incomplate = False
-    _error = None
-    _completion = None
+    __line: str
+    __is_corrupted = False
+    __is_incomplate = False
+    __error = None
+    __completion = None
 
     @property
     def is_corrupted(self):
         """ Returns True if the line is corrupted. """
-        return self._is_corrupted
+        return self.__is_corrupted
 
     @property
     def error(self):
         """ Returns the error character. """
-        return self._error
+        return self.__error
 
     @property
     def is_incomplete(self):
         """ Returns True if the line is incomplete. """
-        return self._is_incomplate
+        return self.__is_incomplate
 
     @property
     def completion(self):
         """ Returns the completion character. """
-        return self._completion
+        return self.__completion
 
     def error_score(self):
         """ Returns the error score. """
-        return ErrorScores[self._error] if self._error else 0
+        return ClosingChars[self.__error].error_score if self.__error else 0
 
     def completion_score(self):
         """ Returns the completion score. """
-        if (self._completion):
-            return reduce(lambda x, y: x * 5 + y, [CompletionScores[x] for x in self._completion])
+        if (self.__completion):
+            return reduce(lambda x, y: x * 5 + y,
+                          [ClosingChars[x].completion_score for x in self.__completion])
         else:
             return 0
 
     def __init__(self, line: str):
-        self._line = line
+        self.__line = line
 
-    def _completion_char(self, char: str) -> str:
+    def __completion_char(self, char: str) -> str:
         """ Returns the completion character. """
-        if char == '[':
-            return ']'
-        elif char == '(':
-            return ')'
-        elif char == '<':
-            return '>'
-        elif char == '{':
-            return '}'
-        else:
-            return None
+        return MatchingChars[char] if char in MatchingChars else None
 
-    def _complete_line(self, stack: list[str]) -> list[str]:
+    def __complete_line(self, stack: list[str]) -> list[str]:
         """ Returns the completion characters for the line. """
-        completion = [self._completion_char(char) for char in stack]
+        completion = [self.__completion_char(char) for char in stack]
         completion.reverse()  # reverse() returns None, so we can't chain it
         return completion
 
     def parse(self):
         """ Parses the line. """
         stack = []
-        for char in self._line:
-            if char in ['[', '(', '<', '{']:
+        for char in self.__line:
+            if char in MatchingChars:
                 stack.append(char)
-            elif char in [']', ')', '>', '}']:
+            elif char in ClosingChars:
                 if len(stack) == 0:
                     return None
-                if stack[-1] == '[' and char == ']':
-                    stack.pop()
-                elif stack[-1] == '(' and char == ')':
-                    stack.pop()
-                elif stack[-1] == '<' and char == '>':
-                    stack.pop()
-                elif stack[-1] == '{' and char == '}':
+                if char == MatchingChars[stack[-1]]:
                     stack.pop()
                 else:
-                    self._error = char
-                    self._is_corrupted = True
+                    self.__error = char
+                    self.__is_corrupted = True
                     return
             else:
                 pass  # print("WTF:", char)
         if len(stack) > 0:
-            self._is_incomplate = True
-            self._completion = self._complete_line(stack)
+            self.__is_incomplate = True
+            self.__completion = self.__complete_line(stack)
 
     def __repr__(self):
-        return (f"Line({self._line}, "
-                f"corrupted: {self._is_corrupted}, "
-                f"incomplete: {self._is_incomplate}, "
-                f"error: {self._error}, "
+        return (f"Line({self.__line}, "
+                f"corrupted: {self.__is_corrupted}, "
+                f"incomplete: {self.__is_incomplate}, "
+                f"error: {self.__error}, "
                 f"error score: {self.error_score()}, "
-                f"completion: {self._completion}, "
+                f"completion: {self.__completion}, "
                 f"completion score: {self.completion_score()}")
 
 
