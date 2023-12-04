@@ -1,5 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import reduce
+from typing_extensions import Self  # 3.10 kludge
 from ppsboot.utils.solution import Solution
 
 
@@ -20,64 +21,33 @@ ClosingChars = {
 }
 
 
+@dataclass
 class Line:
-    """ Line class."""
-
-    __line: str
-    __is_corrupted = False
-    __is_incomplate = False
-    __error = None
-    __completion = None
-
-    @property
-    def is_corrupted(self):
-        """ Returns True if the line is corrupted. """
-        return self.__is_corrupted
-
-    @property
-    def error(self):
-        """ Returns the error character. """
-        return self.__error
-
-    @property
-    def is_incomplete(self):
-        """ Returns True if the line is incomplete. """
-        return self.__is_incomplate
-
-    @property
-    def completion(self):
-        """ Returns the completion character. """
-        return self.__completion
+    line: str
+    is_corrupted: bool = field(default=False)
+    is_incomplete: bool = field(default=False)
+    error: str = field(default=None)
+    completion: list[str] = field(default=None)
 
     def error_score(self):
         """ Returns the error score. """
-        return ClosingChars[self.__error][0] if self.__error else 0
+        return ClosingChars[self.error][0] if self.error else 0
 
     def completion_score(self):
         """ Returns the completion score. """
-        if (self.__completion):
-            return reduce(lambda x, y: x * 5 + y,
-                          [ClosingChars[x][1] for x in self.__completion])
-        else:
-            return 0
-
-    def __init__(self, line: str):
-        self.__line = line
-
-    def __completion_char(self, char: str) -> str:
-        """ Returns the completion character. """
-        return MatchingChars[char] if char in MatchingChars else None
+        return reduce(lambda x, y: x * 5 + y,
+                      [ClosingChars[x][1] for x in self.completion]) if self.completion else 0
 
     def __complete_line(self, stack: list[str]) -> list[str]:
         """ Returns the completion characters for the line. """
-        completion = [self.__completion_char(char) for char in stack]
+        completion = [MatchingChars[char] for char in stack]
         completion.reverse()  # reverse() returns None, so we can't chain it
         return completion
 
-    def parse(self):
-        """ Parses the line. """
+    def parse(self) -> Self:
+        """ Parses the line. Returns the `Line` for chaining. """
         stack = []
-        for char in self.__line:
+        for char in self.line:
             if char in MatchingChars:
                 stack.append(char)
             elif char in ClosingChars:
@@ -86,23 +56,15 @@ class Line:
                 if char == MatchingChars[stack[-1]]:
                     stack.pop()
                 else:
-                    self.__error = char
-                    self.__is_corrupted = True
-                    return
+                    self.error = char
+                    self.is_corrupted = True
+                    return self
             else:
-                pass  # print("WTF:", char)
+                raise ValueError(f'Invalid character: {char}')
         if len(stack) > 0:
-            self.__is_incomplate = True
-            self.__completion = self.__complete_line(stack)
-
-    def __repr__(self):
-        return (f"Line({self.__line}, "
-                f"corrupted: {self.__is_corrupted}, "
-                f"incomplete: {self.__is_incomplate}, "
-                f"error: {self.__error}, "
-                f"error score: {self.error_score()}, "
-                f"completion: {self.__completion}, "
-                f"completion score: {self.completion_score()}")
+            self.is_incomplete = True
+            self.completion = self.__complete_line(stack)
+        return self
 
 
 class Day10(Solution):
@@ -115,23 +77,14 @@ class Day10(Solution):
         with open(filename) as f:
             return [list(line.strip()) for line in f.readlines()]
 
-    def parse_line(self, line: str) -> str | None:
-        """ Parses a line of input. """
-
     def part1(self, input: list[list[str]]) -> int:
         """ Returns the solution to part 1. """
-        lines = [Line(line) for line in input]
-        [line.parse() for line in lines]
-        [print(line) for line in lines]
+        lines = [line.parse() for line in [Line(line) for line in input]]
         scores = [line.error_score() for line in lines if line.is_corrupted]
-        print(scores)
         return sum(scores)
 
     def part2(self, input: list[list[str]]) -> int:
         """ Returns the solution to part 2. """
-        lines = [Line(line) for line in input]
-        [line.parse() for line in lines]
-        [print(line) for line in lines]
+        lines = [line.parse() for line in [Line(line) for line in input]]
         scores = sorted([line.completion_score() for line in lines if line.is_incomplete])
-        print(scores)
         return scores[len(scores)//2]
