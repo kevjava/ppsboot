@@ -12,7 +12,7 @@ if __name__ == "__main__":
         else:
             print(f"Invalid day number: {sys.argv[1]}")
             sys.exit(1)
-        
+
         solution = Days().getByDay(day_number)
         if solution:
             solution.run()
