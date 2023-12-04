@@ -8,6 +8,7 @@ from ppsboot.days.d07.day7 import Day7
 from ppsboot.days.d08.day8 import Day8
 from ppsboot.days.d09.day9 import Day9
 from ppsboot.days.d10.day10 import Day10
+from ppsboot.days.d11.day11 import Day11
 from ppsboot.utils.solution import Solution
 
 
@@ -19,6 +20,7 @@ class Days:
     def __init__(self):
         self._days = []
         self._daysByDay = {}
+        # TODO: Add a crawler that discovers these.
         self.add(Day1())
         self.add(Day2())
         self.add(Day3())
@@ -29,6 +31,7 @@ class Days:
         self.add(Day8())
         self.add(Day9())
         self.add(Day10())
+        self.add(Day11())
 
     def add(self, day: Solution) -> None:
         """ Adds a day.
