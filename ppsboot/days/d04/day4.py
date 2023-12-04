@@ -44,18 +44,23 @@ class BingoCard:
 class BingoGame:
 
     def __init__(self, called_numbers: list[int], bingo_cards: list[BingoCard]) -> None:
-        self._called_numbers = called_numbers
-        self._bingo_cards = bingo_cards
+        self.__called_numbers = called_numbers
+        self.__bingo_cards = bingo_cards
 
+    @property
+    def called_numbers(self) -> list[int]:
+        return self.__called_numbers
+
+    @property
     def cards(self) -> list[BingoCard]:
-        return self._bingo_cards
+        return self.__bingo_cards
 
     def __repr__(self) -> str:
         ret = ''
         ret += "Called numbers\n"
-        ret += f"{self._called_numbers}\n"
+        ret += f"{self.__called_numbers}\n"
         ret += "Cards\n"
-        for card in self._bingo_cards:
+        for card in self.__bingo_cards:
             ret += f"{card}\n"
         return ret
 
@@ -82,18 +87,22 @@ class Day4(Solution):
 
     def score_first_winner(self, game: BingoGame) -> int:
         """ Returns the score of the first winner. """
-        for i in range(len(game._called_numbers)):
-            called_numbers = game._called_numbers[:i+1]
-            for card in game.cards():
+        for i in range(len(game.called_numbers)):
+            called_numbers = game.called_numbers[:i+1]
+            for card in game.cards:
                 if card.is_winner(called_numbers):
                     return card.score(called_numbers)
         return 0
 
     def score_last_winner(self, game: BingoGame) -> int:
-        """ Returns the score of the last winner. """
-        cards = game.cards()
-        for i in range(len(game._called_numbers)):
-            called_numbers = game._called_numbers[:i+1]
+        """ Returns the score of the last winner.
+
+        Loop through called numbers. If we have multiple cards left,
+        remove the winners. If there's one left, return that score.
+        """
+        cards = game.cards
+        for i in range(len(game.called_numbers)):
+            called_numbers = game.called_numbers[:i+1]
             if (len(cards) > 1):
                 winning_cards = [card for card in cards if card.is_winner(called_numbers)]
                 cards = [card for card in cards if card not in winning_cards]
