@@ -12,11 +12,11 @@ class Day7(Solution):
     def __init__(self):
         super().__init__(7, 'ppsboot/days/d07/input.txt')
 
-    def load_input(self, filename: str) -> list[str]:
+    def load_input(self, filename: str) -> list[int]:
         with open(filename) as f:
             return [int(x) for x in f.readline().split(',')]
 
-    def part1(self, input: list[str]) -> int:
+    def part1(self, input: list[int]) -> int:
         """ Returns the solution to part 1. """
         distance = [0 for x in range(max(input)+1)]
         for i in range(max(input)+1):
@@ -25,7 +25,7 @@ class Day7(Solution):
 
         return min(distance)
 
-    def part2(self, input: list[str]) -> int:
+    def part2(self, input: list[int]) -> int:
         """ Returns the solution to part 2. """
         costs = [0 for x in range(max(input)+1)]
         for i in range(1, max(input)+1):
