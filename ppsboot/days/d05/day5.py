@@ -16,38 +16,6 @@ class Vector():
     start: Point = field()
     end: Point = field()
 
-    def is_left(self) -> bool:
-        """ Returns True if the vector is going left. """
-        return self.start.x > self.end.x
-
-    def is_right(self) -> bool:
-        """ Returns True if the vector is going right. """
-        return self.start.x < self.end.x
-
-    def is_up(self) -> bool:
-        """ Returns True if the vector is going up. """
-        return self.start.y > self.end.y
-
-    def is_down(self) -> bool:
-        """ Returns True if the vector is going down. """
-        return self.start.y < self.end.y
-
-    def is_diagonal(self) -> bool:
-        """ Returns True if the vector is a line (i.e. not diagonal). """
-        return self.start.x != self.end.x and self.start.y != self.end.y
-
-    def distance(self) -> int:
-        """ Returns the distance of the vector. """
-        return max(abs(self.start.x - self.end.x), abs(self.start.y - self.end.y))
-
-    def maxx(self) -> int:
-        """ Returns the max x value. """
-        return max(self.start.x, self.end.x)
-
-    def maxy(self) -> int:
-        """ Returns the max y value. """
-        return max(self.start.y, self.end.y)
-
 
 class Grid():
     """ Represents an (x,y) grid. """
@@ -64,20 +32,24 @@ class Grid():
         return ret
 
     def plot(self, vec: Vector) -> None:
-        """ Plots a vector on the grid. """
+        """ Plots a vector on the grid.
+        """
         x = vec.start.x
         y = vec.start.y
-        for n in range(0, vec.distance() + 1):
-            self._grid[y][x] += 1
-            if (vec.is_left()):
-                x -= 1
-            elif (vec.is_right()):
-                x += 1
 
-            if (vec.is_up()):
-                y -= 1
-            elif (vec.is_down()):
-                y += 1
+        dx = 0  # 1 means we go right, -1 means we go left
+        if (vec.start.x != vec.end.x):
+            dx = (vec.end.x - vec.start.x) // abs(vec.end.x - vec.start.x)
+
+        dy = 0  # 1 means we go down, -1 means we go up
+        if (vec.start.y != vec.end.y):
+            dy = (vec.end.y - vec.start.y) // abs(vec.end.y - vec.start.y)
+
+        distance = max(abs(vec.start.x - vec.end.x), abs(vec.start.y - vec.end.y))
+        for n in range(0, distance + 1):
+            self._grid[y][x] += 1
+            x += dx
+            y += dy
 
     def rows(self) -> list[list[int]]:
         """ Returns the rows of the grid. """
@@ -110,20 +82,20 @@ class Day5(Solution):
 
     def part1(self, input: list[Vector]) -> int:
         """ Returns the solution to part 1. """
-        width = max([vec.maxx() for vec in input]) + 1
-        height = max([vec.maxy() for vec in input]) + 1
+        width = max([max(vec.start.x, vec.end.x) for vec in input]) + 1
+        height = max([max(vec.start.y, vec.end.y) for vec in input]) + 1
         grid = Grid(width, height)
 
         for vec in input:
-            if (not vec.is_diagonal()):
+            if (vec.start.x == vec.end.x or vec.start.y == vec.end.y):  # Not diagonal.
                 grid.plot(vec)
 
         return grid.count_overlaps()
 
     def part2(self, input: list[Vector]) -> int:
         """ Returns the solution to part 1. """
-        width = max([vec.maxx() for vec in input]) + 1
-        height = max([vec.maxy() for vec in input]) + 1
+        width = max([max(vec.start.x, vec.end.x) for vec in input]) + 1
+        height = max([max(vec.start.y, vec.end.y) for vec in input]) + 1
         grid = Grid(width, height)
 
         for vec in input:
