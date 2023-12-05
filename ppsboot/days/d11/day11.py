@@ -4,13 +4,15 @@ from ppsboot.utils.solution import Solution
 
 @dataclass
 class OctopusGrid:
+    """ A grid of octopuses, each with an energy level. """
+
     rows: list[list[int]]
 
     def __repr__(self) -> str:
         return '\n'.join([''.join([str(n) if n < 10 else '*' for n in row]) for row in self.rows])
 
     def __get_adjacents(self, this_x: int, this_y: int) -> list[tuple[int, int]]:
-        """ Get adjacent cells with energy > 9, returning a list of coordinates.
+        """ Get adjacent cells, returning a list of coordinates.
 
         Uses `max` and `min` to avoid out-of-bounds errors.
         """
@@ -20,9 +22,10 @@ class OctopusGrid:
                 if not (x == this_x and y == this_y)]
 
     def __flash(self, this_x: int, this_y: int) -> None:
-        """ Flash the octopus at the given coordinates. """
+        """ Flash the octopus at the given coordinates. Give all the adjacent octopuses a point of
+        energy."""
         for (x, y) in self.__get_adjacents(this_x, this_y):
-            if (self.rows[y][x] > 0):  # This guy just flashed.
+            if (self.rows[y][x] > 0):  # This guy just flashed if he's at zero.
                 self.rows[y][x] += 1
         self.rows[this_y][this_x] = 0
 
@@ -30,7 +33,7 @@ class OctopusGrid:
         """ Performs a single step.
 
         Energy level increases by 1 for everybody, and then we flash any octopus with energy > 9,
-        until they're all done flashing.
+        until they're all done flashing. Returns the number of flashes that happened in this step.
         """
         flashes = 0
 
