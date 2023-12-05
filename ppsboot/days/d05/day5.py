@@ -12,7 +12,7 @@ class Point():
 
 @dataclass(frozen=True)
 class Vector():
-    """ A vector - contains a starting point, an ending point, and a lot of convenience methods. """
+    """ A vector - contains a starting point, an ending point. """
     start: Point = field()
     end: Point = field()
 
