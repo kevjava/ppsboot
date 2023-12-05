@@ -15,7 +15,8 @@ class Day6(Solution):
             return [int(x) for x in f.readline().split(',')]
 
     def next_state(self, input: list[int]) -> list[int]:
-        """ Returns the next state. """
+        """ Returns the next state. Subtract one from everybody, then add 8s to the end for
+        all the ones that have reached zero."""
         to_create = input.count(0)
         new_state = [x-1 if x > 0 else 6 for x in input]
         for i in range(to_create):
@@ -23,7 +24,11 @@ class Day6(Solution):
         return new_state
 
     def next_state_but_smart(self, counts: list[int]) -> list[int]:
-        """ Returns the next state. """
+        """
+        Returns the next state, but using counts instead of an array element for every single
+        lanternfish. Now we can just pop the zeros off one side and add them as eights to the
+        other side.
+        """
         to_create = counts[0]
         new_state = list(counts)
         to_create = new_state.pop(0)
