@@ -4,20 +4,17 @@ from ppsboot.utils.solution import Solution
 
 @dataclass(frozen=True)
 class Point():
-    """ A point on the grid. """
+    """ A point on the grid. Yeah, this could be a tuple, but I like being able to name the
+    fields."""
     x: int = field()
     y: int = field()
 
 
-@dataclass
+@dataclass(frozen=True)
 class Vector():
-    """ A vector - contains a starting point and an ending point. """
-    start: tuple[int, int] = field()
-    end: tuple[int, int] = field()
-
-    def __init__(self, start: tuple, end: tuple) -> None:
-        self.start = Point(start[0], start[1])
-        self.end = Point(end[0], end[1])
+    """ A vector - contains a starting point, an ending point, and a lot of convenience methods. """
+    start: Point = field()
+    end: Point = field()
 
     def is_left(self) -> bool:
         """ Returns True if the vector is going left. """
@@ -35,9 +32,9 @@ class Vector():
         """ Returns True if the vector is going down. """
         return self.start.y < self.end.y
 
-    def is_line(self) -> bool:
-        """ Returns True if the vector is a line. """
-        return self.start.x == self.end.x or self.start.y == self.end.y
+    def is_diagonal(self) -> bool:
+        """ Returns True if the vector is a line (i.e. not diagonal). """
+        return self.start.x != self.end.x and self.start.y != self.end.y
 
     def distance(self) -> int:
         """ Returns the distance of the vector. """
@@ -105,7 +102,7 @@ class Day5(Solution):
         (ins_start, ins_end) = line.split(' -> ')
         (startx, starty) = ins_start.split(',')
         (endx, endy) = ins_end.split(',')
-        return Vector((int(startx), int(starty)), (int(endx), int(endy)))
+        return Vector(Point(int(startx), int(starty)), Point(int(endx), int(endy)))
 
     def load_input(self, filename: str) -> list[Vector]:
         with open(filename) as f:
@@ -118,15 +115,15 @@ class Day5(Solution):
         grid = Grid(width, height)
 
         for vec in input:
-            if (vec.is_line()):
+            if (not vec.is_diagonal()):
                 grid.plot(vec)
 
         return grid.count_overlaps()
 
     def part2(self, input: list[Vector]) -> int:
         """ Returns the solution to part 1. """
-        width = max([vec.end.x for vec in input]) + 1
-        height = max([vec.end.y for vec in input]) + 1
+        width = max([vec.maxx() for vec in input]) + 1
+        height = max([vec.maxy() for vec in input]) + 1
         grid = Grid(width, height)
 
         for vec in input:
