@@ -66,13 +66,9 @@ class Day11(Solution):
 
     def part2(self, grid: OctopusGrid) -> int:
         """ Find the first step where all octopuses flash. """
-        print("starting grid:")
-        print(grid)
         step = 0
         while True:
             step += 1
             flashes = grid.step()
-            print("Step", step, "flashes", flashes)
-            print(grid)
             if flashes == (len(grid.rows) * len(grid.rows[0])):
                 return step
