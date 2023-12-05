@@ -1,32 +1,23 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from ppsboot.utils.solution import Solution
 
 
-@dataclass
+@dataclass(frozen=True)
 class Point():
-    x: int
-    y: int
-
-    def __repr__(self) -> str:
-        return f"({self.x},{self.y})"
+    """ A point on the grid. """
+    x: int = field()
+    y: int = field()
 
 
+@dataclass
 class Vector():
     """ A vector - contains a starting point and an ending point. """
+    start: tuple[int, int] = field()
+    end: tuple[int, int] = field()
 
     def __init__(self, start: tuple, end: tuple) -> None:
-        self._start = Point(start[0], start[1])
-        self._end = Point(end[0], end[1])
-
-    @property
-    def start(self) -> Point:
-        """ Returns the start. """
-        return self._start
-
-    @property
-    def end(self) -> Point:
-        """ Returns the end. """
-        return self._end
+        self.start = Point(start[0], start[1])
+        self.end = Point(end[0], end[1])
 
     def is_left(self) -> bool:
         """ Returns True if the vector is going left. """
@@ -59,9 +50,6 @@ class Vector():
     def maxy(self) -> int:
         """ Returns the max y value. """
         return max(self.start.y, self.end.y)
-
-    def __repr__(self) -> str:
-        return f"Vector: {self.start} -> {self.end}"
 
 
 class Grid():
