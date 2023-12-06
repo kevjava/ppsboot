@@ -23,7 +23,7 @@ class Day6(Solution):
             new_state.append(8)
         return new_state
 
-    def next_state_but_smart(self, counts: list[int]) -> list[int]:
+    def next_state_using_counts(self, counts: list[int]) -> list[int]:
         """
         Returns the next state, but using counts instead of an array element for every single
         lanternfish. Now we can just pop the zeros off one side and add them as eights to the
@@ -32,8 +32,8 @@ class Day6(Solution):
         to_create = counts[0]
         new_state = list(counts)
         to_create = new_state.pop(0)
-        new_state[6] += to_create
-        new_state.append(to_create)
+        new_state[6] += to_create  # Old 0s become new 6s.
+        new_state.append(to_create)  # New 8s.
         return new_state
 
     def part1(self, input: list[str]) -> int:
@@ -50,6 +50,6 @@ class Day6(Solution):
         counts = [list.count(input, x) for x in range(0, 9)]
         end = 256
         for day in range(1, end + 1):
-            counts = self.next_state_but_smart(counts)
+            counts = self.next_state_using_counts(counts)
             # print(f"After {day} day", counts)
         return sum(counts)
