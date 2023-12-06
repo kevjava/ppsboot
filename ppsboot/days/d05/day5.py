@@ -1,13 +1,9 @@
+from collections import namedtuple
 from dataclasses import dataclass, field
 from ppsboot.utils.solution import Solution
 
 
-@dataclass(frozen=True)
-class Point():
-    """ A point on the grid. Yeah, this could be a tuple, but I like being able to name the
-    fields."""
-    x: int = field()
-    y: int = field()
+Point = namedtuple('Point', ['x', 'y'])
 
 
 @dataclass(frozen=True)
