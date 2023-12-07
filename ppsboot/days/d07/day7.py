@@ -1,3 +1,4 @@
+import itertools
 from ppsboot.utils.solution import Solution
 
 
@@ -27,9 +28,7 @@ class Day7(Solution):
 
     def part2(self, input: list[int]) -> int:
         """ Returns the solution to part 2. """
-        costs = [0 for x in range(max(input)+1)]
-        for i in range(1, max(input)+1):
-            costs[i] = costs[i-1] + i
+        costs = list(itertools.accumulate(range(max(input)+1)))
 
         distances = [0 for x in range(max(input)+1)]
         for i in range(max(input)+1):
