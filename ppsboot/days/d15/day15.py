@@ -48,6 +48,9 @@ class Grid:
         return self.__nodes[y][x].risk
 
     def score(self) -> None:
+        """ We're doin' a Dijkstra (I think...)! """
+        # self.__nodes[self.height()-1][self.height()-1].risk = 0  # First one has no risk
+        # self.__nodes[self.height()-1][self.height()-1].distance = 0  # First one has no distance
         self.__nodes[0][0].risk = 0  # First one has no risk
         self.__nodes[0][0].distance = 0  # First one has no distance
         self.__queue: list[Node] = [self.__nodes[0][0]]
@@ -67,7 +70,7 @@ class Grid:
 class Day15(Solution):
 
     def __init__(self) -> None:
-        super().__init__(15, 'ppsboot/days/d15/input_test.txt')
+        super().__init__(15, 'ppsboot/days/d15/input.txt')
 
     def load_input(self, filename: str) -> Grid:
         with open(filename, 'r') as f:
@@ -83,9 +86,6 @@ class Day15(Solution):
         # print(grid)
         new_size = 5 * grid.height()
         new_grid = [[0 for _ in range(new_size)] for _ in range(new_size)]
-        for x in range(grid.height()):
-            for y in range(grid.height()):
-                new_grid[y][x] = grid.value_at(x, y)
 
         h = grid.height()
         for x in range(h):
@@ -99,7 +99,9 @@ class Day15(Solution):
         return Grid(new_grid)
 
     def part2(self, input: Grid) -> int:
+        print("multiplying grid")
         grid = self.multiply_grid(input)
-        print(grid)
+        # print(grid)
+        print("scoring")
         grid.score()
         return grid.get_end_distance()
