@@ -67,8 +67,7 @@ class Day13(Solution):
                     new_y = fold.point - (point.y - fold.point)  # 7 - (9 - 7) = 5
                     new_points.add(Point(point.x, new_y))
                 else:
-                    # Remove the point.
-                    pass
+                    pass  # Remove the point.
         return OrigamiPage(new_points, page.instructions[1:])
 
     def part1(self, page: OrigamiPage) -> int:
