@@ -32,41 +32,50 @@ class Display:
         codex: dict[str, str] = {}
         one_coded = [pattern for pattern in self._signal_patterns
                      if len(pattern) == 2][0]
-        codex[one_coded] = '1'
+        codex[one_coded] = '1'  # The only one with two segments lit.
+
         seven_coded = [pattern for pattern in self._signal_patterns
                        if len(pattern) == 3][0]
-        codex[seven_coded] = '7'
+        codex[seven_coded] = '7'  # The only one with three segments lit.
+
         four_coded = [pattern for pattern in self._signal_patterns
                       if len(pattern) == 4][0]
-        codex[four_coded] = '4'
+        codex[four_coded] = '4'  # The only one with four segments lit.
+
         eight_coded = [pattern for pattern in self._signal_patterns
                        if len(pattern) == 7][0]
-        codex[eight_coded] = '8'
+        codex[eight_coded] = '8'  # The only one with seven segments lit.
+
         nine_coded = [pattern for pattern in self._signal_patterns
                       if len(pattern) == 6
                       and set(four_coded).issubset(set(pattern))][0]
-        codex[nine_coded] = '9'
+        codex[nine_coded] = '9'  # Six segments lit, and it contains all the segments of the four.
+
         zero_coded = [pattern for pattern in self._signal_patterns
                       if len(pattern) == 6
                       and set(seven_coded).issubset(set(pattern))
                       and not set(four_coded).issubset(set(pattern))][0]
-        codex[zero_coded] = '0'
+        codex[zero_coded] = '0'  # Six segments lit, and it contains all the segments of the seven.
+
         six_coded = [pattern for pattern in self._signal_patterns
                      if len(pattern) == 6
                      and pattern is not nine_coded
                      and pattern is not zero_coded][0]
-        codex[six_coded] = '6'
+        codex[six_coded] = '6'  # Six segments lit, and it isn't the nine or the zero. :)
+
         two_coded = [pattern for pattern in self._signal_patterns
                      if len(pattern) == 5 and not set(pattern).issubset(set(nine_coded))][0]
-        codex[two_coded] = '2'
+        codex[two_coded] = '2'  # Five segments lit and the nine doesn't contain it.
+
         five_coded = [pattern for pattern in self._signal_patterns
                       if len(pattern) == 5 and set(pattern).issubset(set(six_coded))][0]
-        codex[five_coded] = '5'
+        codex[five_coded] = '5'  # Five segments lit, and it is contained in the six.
+
         three_coded = [pattern for pattern in self._signal_patterns
                        if len(pattern) == 5
                        and pattern is not five_coded
                        and pattern is not two_coded][0]
-        codex[three_coded] = '3'
+        codex[three_coded] = '3'  # Five segments lit, and it isn't the five or the two.
 
         ret_str = ''
         for output in self._outputs:
