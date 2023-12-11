@@ -41,8 +41,9 @@ class Grid():
             adjacents.append((x+1, y))
         return adjacents
 
-    def at(self, x: int, y: int) -> int:
+    def __getitem__(self, key: tuple[int, 2]) -> int:
         """ Returns the value at the given coordinates. """
+        (x, y) = key
         return self._grid[y][x]
 
 
@@ -81,7 +82,7 @@ class Day9(Solution):
             adjacents = grid.get_adjacents(x, y)
             for adjacent in adjacents:
                 (x, y) = adjacent
-                if adjacent not in basin and grid.at(x, y) < 9:
+                if adjacent not in basin and grid[x, y] < 9:
                     basin.append(adjacent)
                     to_check.add(adjacent)
 

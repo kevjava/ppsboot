@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from functools import reduce
+import typing
 from typing_extensions import Self  # 3.10 kludge
 from ppsboot.utils.solution import Solution
 
@@ -12,11 +13,14 @@ MatchingChars = {
 }
 
 
+ScoreSet = typing.NamedTuple("ScoreSet", [('error', int), ('completion', int)])
+
+
 ClosingChars = {  # Is there a better way for this? Lots of repetition.
-    ')': {'error': 3, 'completion': 1},
-    ']': {'error': 57, 'completion': 2},
-    '}': {'error': 1197, 'completion': 3},
-    '>': {'error': 25137, 'completion': 4},
+    ')': ScoreSet(error=3, completion=1),
+    ']': ScoreSet(error=57, completion=2),
+    '}': ScoreSet(error=1197, completion=3),
+    '>': ScoreSet(error=25137, completion=4),
 }
 
 
@@ -30,19 +34,17 @@ class Line:
 
     def error_score(self):
         """ Returns the error score. """
-        return ClosingChars[self.error]['error'] if self.error else 0
+        return ClosingChars[self.error].error if self.error else 0
 
     def completion_score(self):
         """ Returns the completion score. """
         return reduce(lambda x, y: x * 5 + y,
-                      [ClosingChars[x]['completion'] for x in self.completion]) \
+                      [ClosingChars[x].completion for x in self.completion]) \
             if self.completion else 0
 
     def __complete_line(self, stack: list[str]) -> list[str]:
         """ Returns the completion characters for the line. """
-        completion = [MatchingChars[char] for char in stack]
-        completion.reverse()  # reverse() returns None, so we can't chain it
-        return completion
+        return [MatchingChars[char] for char in reversed(stack)]
 
     def parse(self) -> Self:
         """ Parses the line. Returns the `Line` for chaining. """
