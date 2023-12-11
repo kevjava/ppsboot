@@ -23,13 +23,19 @@ class Day15(Solution):
 
         distances[start[1]][start[0]] = 0
         queue = [start]
+        visited = set()
 
         while len(queue) > 0:
             (x, y) = queue.pop(0)
+
+            if (x, y) in visited:
+                continue
+            visited.add((x, y))
+
             current_distance = distances[y][x]
+            # print(f"({x}, {y}) = {current_distance}")
 
             if (x, y) == end:
-                # self.print_grid(distances)
                 return current_distance
 
             for (x2, y2) in [(x + 1, y), (x, y + 1), (x - 1, y), (x, y - 1)]:
@@ -60,8 +66,8 @@ class Day15(Solution):
         return new_grid
 
     def part2(self, input: list[list[int]]) -> int:
-        print("multiplying grid")
+        # print("multiplying grid")
         grid = self.multiply_grid(input)
         # self.print_grid(grid)
-        print("scoring")
+        # print("scoring")
         return self.score_grid(grid)
