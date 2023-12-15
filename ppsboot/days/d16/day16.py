@@ -39,28 +39,41 @@ class Packet():
 
 class PacketParser():
     @staticmethod
-    def _parse_literal_value(bin_data: str) -> int:
-        print("Parsing literal")
-        value, done = 0, False
+    def _parse_literal_value(bin_data: str) -> (int, str):
+        """ Parses a literal value, and returns both the int value as well as the binary
+        equivalent. """
+        print("Parsing literal:", bin_data)
+        value, done, parsed_bin, count = 0, False, '', 0
         while not done:
-            done = bin_data[0] == '0'
-            value = (value << 4) | int(bin_data[1:5], 2)
-            bin_data = bin_data[5:]
-        return value
+            this_bin = bin_data[count*5:(count*5+5)]
+            done = this_bin[0] == '0'
+            parsed_bin += this_bin
+            value = (value << 4) | int(this_bin[1:5], 2)
+            count += 1
+        return (value, parsed_bin)
 
     @staticmethod
     def _parse_bits(bin_data: str) -> list[Packet]:
         print("Parsing", len(bin_data), "bits", bin_data)
-        return [PacketParser.parse(bin_data)]
+        done = False
+        packets = []
+        while not done:
+            (p, parsed_len) = PacketParser._parse_next(bin_data)
+            bin_data = bin_data[parsed_len:]
+            print("Parsed", p)
+            print("Remaining: ", bin_data)
+            done = not len(bin_data)  # Eww.
+            packets.append(p)
+        return packets
 
     @staticmethod
     def _parse_packets(num_packets: int, bin_data: str) -> list[Packet]:
-        print("Parsing packets")
+        print("Parsing ", num_packets, "packets")
         packets = []
         for _ in range(num_packets):
-            pkt = PacketParser._parse_next(bin_data)
+            (pkt, parsed_len) = PacketParser._parse_next(bin_data)
             packets.append(pkt)
-            bin_data = bin_data[len(pkt.bin_data):]
+            bin_data = bin_data[parsed_len:]
         return packets
 
     @staticmethod
@@ -70,36 +83,45 @@ class PacketParser():
         match length_type:
             case LengthType.BITS:
                 num_bits = int(bin_data[1:16], 2)
-                return PacketParser._parse_bits(bin_data[16:16+num_bits])
+                subpackets = PacketParser._parse_bits(bin_data[16:16+num_bits])
+                total_len = 16 + sum([len(p.bin_data) for p in subpackets])
+                return (subpackets, total_len)
             case LengthType.PACKETS:
                 num_packets = int(bin_data[1:12], 2)
-                return PacketParser._parse_packets(num_packets, bin_data[12:])
+                subpackets = PacketParser._parse_packets(num_packets, bin_data[12:])
+                total_len = 12 + sum([len(p.bin_data) for p in subpackets])
+                return (subpackets, total_len)
 
     @staticmethod
-    def _parse_next(bin_data: str) -> Packet:
+    def _parse_next(bin_data: str) -> (Packet, int):
         print("Parsing next", bin_data)
         p = Packet(bin_data)
         p.pkt_version = int(bin_data[0:3], 2)
         p.pkt_type = PacketType(int(bin_data[3:6], 2))
         match p.pkt_type:
             case PacketType.LITERAL:
-                p.value = PacketParser._parse_literal_value(p.bin_data[6:])
+                (p.value, lit_bin) = PacketParser._parse_literal_value(p.bin_data[6:])
+                p.bin_data = p.bin_data[:6] + lit_bin
                 p.subpackets = []
+                return (p, 6 + len(lit_bin))
             case _:
-                p.subpackets = PacketParser._parse_operator(bin_data[6:])
+                (p.subpackets, parsed_len) = PacketParser._parse_operator(bin_data[6:])
+                return (p, 6 + parsed_len)
+
         return p
 
     @staticmethod
     def parse(hex_data: str) -> Packet:
         nibbles = [bin(int(x, 16))[2:].zfill(4) for x in hex_data]
         bin_data = ''.join(nibbles)  # TODO: combine the last line and this one.
-        return PacketParser._parse_next(bin_data)
+        (p, _len) = PacketParser._parse_next(bin_data)
+        return p
 
 
 class Day16(Solution):
 
     def __init__(self):
-        super().__init__(16, 'ppsboot/days/d16/input_test.txt')
+        super().__init__(16, 'ppsboot/days/d16/input.txt')
 
     def load_input(self, filename: str) -> list[str]:
         with open(filename) as f:
