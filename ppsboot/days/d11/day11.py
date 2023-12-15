@@ -39,6 +39,7 @@ class OctopusGrid:
 
         self.rows = [[n + 1 for n in row] for row in self.rows]
 
+        # While there are any octopuses with energy > 9, flash them.
         while any([any([n > 9 for n in row]) for row in self.rows]):
             for (x, y) in [(x, y) for x in range(len(self.rows))
                            for y in range(len(self.rows[x]))
