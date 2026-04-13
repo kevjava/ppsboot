@@ -11,7 +11,7 @@ textual = "^0.41.0"
 
 
 [tool.poetry.group.test.dependencies]
-pytest = "^7.4.3"
+pytest = ">=7.4.3,<10.0.0"
 pytest-mock = "^3.12.0"
 
 
